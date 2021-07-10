@@ -9,6 +9,11 @@ public class KeywordResult
 {
     public string name;
     public int instances;
+
+    public void Print()
+    {
+        Debug.Log("Keyword Result:\t" + name + "\t\t" + "Instances: " + instances);
+    }
 }
 
 public class HistoryParser
@@ -24,15 +29,18 @@ public class HistoryParser
 
             foreach (var kr in searchTermsWeMeet)
             {
+                bool exists = false;
                 foreach (var mkr in masterKeyWordMatches)
                 {
                     if (kr.name == mkr.name)    // if already exists in Master List
                     {
                         mkr.instances += kr.instances;
-                        continue;
+                        exists = true;
+                        break;
                     }
                 }
-                masterKeyWordMatches.Add(kr);
+                if (!exists)
+                    masterKeyWordMatches.Add(kr);
             }
         }
 

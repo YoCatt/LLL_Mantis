@@ -19,11 +19,22 @@ public class MantisVoice : MonoBehaviour
     [Button]
     void Abba()
     {
+        HistoryGetter.CopyHistoryFilesThatExist();
+
+        print("Chrome Keyword Result: ");
+        List<KeywordResult> chromeResult = HistoryParser.GetSearchTermsWeMeetChrome();
+        foreach (var kr in chromeResult)
+            kr.Print();
+
+        print("Brave Keyword Result: ");
+        List<KeywordResult> braveResult = HistoryParser.GetSearchTerms(HistoryGetter.braveHistoryCopyDir);
+        foreach (var kr in braveResult)
+            kr.Print();
+
+        print("Master Keyword Result: ");
         List<KeywordResult> matchedTerms = HistoryParser.GetSearchTermsOfAllBrowsers();
         foreach (var kr in matchedTerms)
-        {
-            print("Matched Keyword Name: " + kr.name + "\t" + "Instances: " + kr.instances);
-        }
+            kr.Print();
     }
 
     [Button]
@@ -49,7 +60,7 @@ public class MantisVoice : MonoBehaviour
     [Button]
     void GetAllHistoryAudioClips()
     {
-        List<KeywordResult> searchesMatched = HistoryParser.GetSearchTermsWeMeetChrome();
+        List<KeywordResult> searchesMatched = HistoryParser.GetSearchTermsOfAllBrowsers();
 
         for (int i = 0; i < searchesMatched.Count; ++i)
         {

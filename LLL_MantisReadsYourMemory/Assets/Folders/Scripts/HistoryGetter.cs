@@ -21,20 +21,18 @@ public class HistoryGetter
         return Environment.UserName;
     }
 
-    public static List<string> CopyHistoryFilesThatExist()
+    public static List<string> CopyHistoryFilesThatExist()  // copies history files that exists and returns the string of dirs
     {
         historyCopies = new List<string>();
 
         if (System.IO.File.Exists(braveDefaultHistoryDir))
         {
-            Debug.Log("Brave History Exists");
             CopyBraveHistoryFile();
             historyCopies.Add(braveHistoryCopyDir);
         }
         
         if (System.IO.File.Exists(chromeDefaultHistoryDir))
         {
-            Debug.Log("Chrome History Exists");
             CopyChromeHistoryFile();
             historyCopies.Add(chromeHistoryCopyDir);
         }
@@ -58,7 +56,7 @@ public class HistoryGetter
     {
         try
         {
-            File.Copy(braveDefaultHistoryDir, chromeHistoryCopyDir, true);
+            File.Copy(braveDefaultHistoryDir, braveHistoryCopyDir, true);
         }
         catch (IOException iox)
         {
