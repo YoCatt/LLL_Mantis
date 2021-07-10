@@ -1,23 +1,88 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System.Data;
 using Mono.Data.Sqlite;
 using System.IO;
-using EasyButtons;
-using System;
-using UnityEngine.UI;
 using Newtonsoft.Json;
-using UnityEngine.Video;
+
+public class KeywordResult
+{
+    public string name;
+    public int instances;
+}
 
 public class HistoryParser
 {
-    public static List<string> GetSearchTermsWeMeetChrome()
+    public static List<KeywordResult> GetSearchTermsOfAllBrowsers()
     {
-        HistoryGetter.CopyChromeHistory();
+        List<KeywordResult> masterKeyWordMatches = new List<KeywordResult>();
+        List<string> historyLocations = HistoryGetter.CopyHistoryFilesThatExist();
 
-        var searchTerms = GetSearchTerms().Searches;
-        List<string> searchTermsWeMeet = new List<string>();
+        for (int i = 0; i < historyLocations.Count; ++i)
+        {
+            List<KeywordResult> searchTermsWeMeet = GetSearchTerms(historyLocations[i]);
+
+            foreach (var kr in searchTermsWeMeet)
+            {
+                foreach (var mkr in masterKeyWordMatches)
+                {
+                    if (kr.name == mkr.name)    // if already exists in Master List
+                    {
+                        mkr.instances += kr.instances;
+                        continue;
+                    }
+                }
+                masterKeyWordMatches.Add(kr);
+            }
+        }
+
+        return masterKeyWordMatches;
+        // Foreach history file we copied ✔
+        // Get matched terms    ✔
+        // combine with the master list to avoid reduntent entries. ✔
+    }
+    
+    public static List<KeywordResult> GetSearchTerms(string path)
+    {
+        var searchTerms = GetJSONSearchTerms().Searches;
+        List<KeywordResult> searchTermsWeMatch = new List<KeywordResult>();
+
+        // Open Database
+        string connection = "URI=file:" + path;
+        IDbConnection dbcon = new SqliteConnection(connection);
+        dbcon.Open();
+
+        for (int i = 0; i < searchTerms.Count; ++i)
+        {
+            IDbCommand cmnd_read = dbcon.CreateCommand();
+            IDataReader reader;
+
+            string query = GetQueryString(searchTerms[i]);
+
+            cmnd_read.CommandText = query;
+            reader = cmnd_read.ExecuteReader();
+
+            int count = 0;
+            while (reader.Read())
+                ++count;
+
+            if (count > 0)
+            {
+                KeywordResult kr = new KeywordResult();
+                kr.instances = count;
+                kr.name = searchTerms[i].title;
+                searchTermsWeMatch.Add(kr);
+            }
+        }
+        return searchTermsWeMatch;
+    }
+
+    public static List<KeywordResult> GetSearchTermsWeMeetChrome()
+    {
+        HistoryGetter.CopyChromeHistoryFile();
+
+        var searchTerms = GetJSONSearchTerms().Searches;
+        List<KeywordResult> searchTermsWeMatch = new List<KeywordResult>();
 
         // Open Database
         string connection = "URI=file:" + HistoryGetter.chromeHistoryCopyDir;
@@ -34,17 +99,27 @@ public class HistoryParser
             cmnd_read.CommandText = query;
             reader = cmnd_read.ExecuteReader();
             
-            if (reader.Read())
+
+            int count = 0;
+            while (reader.Read())
             {
-                searchTermsWeMeet.Add(searchTerms[i].title);
+                ++count;
+            }
+
+            if (count > 0)
+            {
+                KeywordResult kr = new KeywordResult();
+                kr.instances = count;
+                kr.name = searchTerms[i].title;
+                searchTermsWeMatch.Add(kr);
             }
         }
-        return searchTermsWeMeet;
+        return searchTermsWeMatch;
     }
 
-    void GetURLSFromChromeHistory()
+    void GetURLSFromChromeHistory() // should delete, but I'm keeping for a nice reference
     {
-        HistoryGetter.CopyChromeHistory();
+        HistoryGetter.CopyChromeHistoryFile();
 
         // Open Database
         string connection = "URI=file:" + HistoryGetter.chromeHistoryCopyDir;
@@ -87,7 +162,7 @@ public class HistoryParser
         return query;
     }
 
-    static HistorySearchTermsJson GetSearchTerms()
+    static HistorySearchTermsJson GetJSONSearchTerms()
     {
         var sr = new StreamReader(Application.streamingAssetsPath + "/" + "SearchTerms.json");
         HistorySearchTermsJson myDeserializedClass = JsonConvert.DeserializeObject<HistorySearchTermsJson>(sr.ReadToEnd());

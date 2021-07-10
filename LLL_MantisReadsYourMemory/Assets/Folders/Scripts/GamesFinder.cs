@@ -1,13 +1,8 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System.IO;
-using EasyButtons;
-using System;
-using UnityEngine.UI;
 
 using Newtonsoft.Json;
-using UnityEngine.Video;
 
 public class GamesFinder
 {
