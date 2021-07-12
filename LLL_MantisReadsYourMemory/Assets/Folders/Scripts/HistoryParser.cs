@@ -25,23 +25,9 @@ public class HistoryParser
 
         for (int i = 0; i < historyLocations.Count; ++i)
         {
-            List<KeywordResult> searchTermsWeMeet = GetSearchTerms(historyLocations[i]);
+            List<KeywordResult> searchTermsWeMeet = GetMatchedSearchTerms(historyLocations[i]);
 
-            foreach (var kr in searchTermsWeMeet)
-            {
-                bool exists = false;
-                foreach (var mkr in masterKeyWordMatches)
-                {
-                    if (kr.name == mkr.name)    // if already exists in Master List
-                    {
-                        mkr.instances += kr.instances;
-                        exists = true;
-                        break;
-                    }
-                }
-                if (!exists)
-                    masterKeyWordMatches.Add(kr);
-            }
+            AddToMasterMasterKRList(ref masterKeyWordMatches, ref searchTermsWeMeet);
         }
 
         return masterKeyWordMatches;
@@ -49,10 +35,29 @@ public class HistoryParser
         // Get matched terms    ✔
         // combine with the master list to avoid reduntent entries. ✔
     }
-    
-    public static List<KeywordResult> GetSearchTerms(string path)
+
+    static void AddToMasterMasterKRList(ref List<KeywordResult> masterList, ref List<KeywordResult> listToAddToMasterList)
     {
-        var searchTerms = GetJSONSearchTerms().Searches;
+        foreach (var kr in listToAddToMasterList)
+        {
+            bool exists = false;
+            foreach (var mkr in masterList)
+            {
+                if (kr.name == mkr.name)    // if already exists in Master List
+                {
+                    mkr.instances += kr.instances;
+                    exists = true;
+                    break;
+                }
+            }
+            if (!exists)
+                masterList.Add(kr);
+        }
+    }
+    
+    public static List<KeywordResult> GetMatchedSearchTerms(string path)
+    {
+        var searchTerms = GetJSONSearchTerms();
         List<KeywordResult> searchTermsWeMatch = new List<KeywordResult>();
 
         // Open Database
@@ -89,7 +94,7 @@ public class HistoryParser
     {
         HistoryGetter.CopyChromeHistoryFile();
 
-        var searchTerms = GetJSONSearchTerms().Searches;
+        var searchTerms = GetJSONSearchTerms();
         List<KeywordResult> searchTermsWeMatch = new List<KeywordResult>();
 
         // Open Database
@@ -103,6 +108,8 @@ public class HistoryParser
             IDataReader reader;
             
             string query = GetQueryString(searchTerms[i]);
+
+            Debug.Log(query);
 
             cmnd_read.CommandText = query;
             reader = cmnd_read.ExecuteReader();
@@ -170,11 +177,11 @@ public class HistoryParser
         return query;
     }
 
-    static HistorySearchTermsJson GetJSONSearchTerms()
+    public static List<Search> GetJSONSearchTerms()
     {
         var sr = new StreamReader(Application.streamingAssetsPath + "/" + "SearchTerms.json");
         HistorySearchTermsJson myDeserializedClass = JsonConvert.DeserializeObject<HistorySearchTermsJson>(sr.ReadToEnd());
         sr.Close();
-        return myDeserializedClass;
+        return myDeserializedClass.Searches;
     }
 }

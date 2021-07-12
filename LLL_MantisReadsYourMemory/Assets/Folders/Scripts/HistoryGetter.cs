@@ -10,9 +10,11 @@ public class HistoryGetter
 {
     public static string chromeDefaultHistoryDir =>  @"C:\Users\" + GetUsername() + @"\AppData\Local\Google\Chrome\User Data\Default\History";
     public static string braveDefaultHistoryDir =>  @"C:\Users\" + GetUsername() + @"\AppData\Local\BraveSoftware\Brave-Browser\User Data\Default\History";
+    public static string foxDefaultHistoryDir =>  @"C:\Users\" + GetUsername() + @"C:\AppData\Roaming\Mozilla\Firefox\Profiles\1pkr17pg.default-release";
 
     public static string chromeHistoryCopyDir = Application.streamingAssetsPath + "/" + "ChromeHistory";
     public static string braveHistoryCopyDir = Application.streamingAssetsPath + "/" + "BraveHistory";
+    public static string foxHistoryCopyDir = Application.streamingAssetsPath + "/" + "FoxHistory";
 
     public static List<string> historyCopies;
 

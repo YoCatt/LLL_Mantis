@@ -22,7 +22,7 @@ public class GamesFinder
         return gamesInstalled;
     }
 
-    static List<string> GetGamesList()
+    public static List<string> GetGamesList()
     {
         var sr = new StreamReader(Application.streamingAssetsPath + "/" + "games.json");
         JsonGamesClass myDeserializedClass = JsonConvert.DeserializeObject<JsonGamesClass>(sr.ReadToEnd());
