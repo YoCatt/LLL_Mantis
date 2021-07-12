@@ -44,24 +44,27 @@ public class MantisVoice : MonoBehaviour
     }
 
     [Button]
-    void AbbaTestThing()
+    void Test()
     {
         HistoryGetter.CopyHistoryFilesThatExist();
 
-        print("Chrome Keyword Result: ");
-        List<KeywordResult> chromeResult = HistoryParser.GetSearchTermsWeMeetChrome();
-        foreach (var kr in chromeResult)
-            kr.Print();
+        // print("Chrome Keyword Result: ");
+        // List<KeywordResult> chromeResult = HistoryParser.GetMatchedSearchTerms(HistoryGetter.chromeHistoryCopyDir);
+        // foreach (var kr in chromeResult)
+        //     kr.Print();
 
-        print("Brave Keyword Result: ");
-        List<KeywordResult> braveResult = HistoryParser.GetMatchedSearchTerms(HistoryGetter.braveHistoryCopyDir);
-        foreach (var kr in braveResult)
-            kr.Print();
+        // print("Brave Keyword Result: ");
+        // List<KeywordResult> braveResult = HistoryParser.GetMatchedSearchTerms(HistoryGetter.braveHistoryCopyDir);
+        // foreach (var kr in braveResult)
+        //     kr.Print();
 
         print("Master Keyword Result: ");
         List<KeywordResult> matchedTerms = HistoryParser.GetSearchTermsOfAllBrowsers();
         foreach (var kr in matchedTerms)
+        {
+
             kr.Print();
+        }
     }
 
     [Button]
@@ -126,17 +129,6 @@ public class MantisVoice : MonoBehaviour
         }
     }
 
-    [Button]
-    void GetInstancesOfEveryMatchedHistory()
-    {
-        List<KeywordResult> searchesMatched = HistoryParser.GetSearchTermsWeMeetChrome();
-        foreach (var kr in searchesMatched)
-        {
-            print("Name: " + kr.name + "\t" + "Instances: " + kr.instances);
-        }
-    }
-
-    [Button]
     AudioClip GetAudioFromPath(string audName)   //without the .wav
     {
         string wavPath = Application.streamingAssetsPath + "/" + audName + ".wav";
@@ -153,7 +145,6 @@ public class MantisVoice : MonoBehaviour
         }
     }
     
-    [Button]
     void GetAllHistoryAudioClips()
     {
         List<KeywordResult> searchesMatched = HistoryParser.GetSearchTermsOfAllBrowsers();

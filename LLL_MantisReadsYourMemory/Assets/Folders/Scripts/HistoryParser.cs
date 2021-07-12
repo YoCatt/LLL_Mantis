@@ -9,10 +9,13 @@ public class KeywordResult
 {
     public string name;
     public int instances;
+    public string query;
+
+    public KeywordResult(string _name, int _instances, string _query) => (name, instances, query) = (_name, _instances, _query);
 
     public void Print()
     {
-        Debug.Log("Keyword Result:\t" + name + "\t\t" + "Instances: " + instances);
+        Debug.Log("Keyword Result:\t" + name + "\t\t" + "Instances: " + instances + "\n" + query);
     }
 }
 
@@ -26,14 +29,43 @@ public class HistoryParser
         for (int i = 0; i < historyLocations.Count; ++i)
         {
             List<KeywordResult> searchTermsWeMeet = GetMatchedSearchTerms(historyLocations[i]);
-
             AddToMasterMasterKRList(ref masterKeyWordMatches, ref searchTermsWeMeet);
         }
 
         return masterKeyWordMatches;
-        // Foreach history file we copied ✔
-        // Get matched terms    ✔
-        // combine with the master list to avoid reduntent entries. ✔
+    }
+
+    public static List<KeywordResult> GetMatchedSearchTerms(string path)
+    {
+        List<KeywordResult> searchTermsWeMatch = new List<KeywordResult>();
+        var searchTerms = GetJSONSearchTerms();
+
+        // Open Database
+        string connection = "URI=file:" + path;
+        IDbConnection dbcon = new SqliteConnection(connection);
+        dbcon.Open();
+
+        foreach (var searchTerm in searchTerms)
+        {
+            IDbCommand cmnd_read = dbcon.CreateCommand();
+            IDataReader reader;
+
+            string query = searchTerm.query;
+
+            cmnd_read.CommandText = query;
+            reader = cmnd_read.ExecuteReader();
+
+            int count = 0;
+            while (reader.Read())
+                ++count;
+
+            if (count > 0)
+            {
+                KeywordResult kr = new KeywordResult(searchTerm.title, count, searchTerm.query);
+                searchTermsWeMatch.Add(kr);
+            }
+        }
+        return searchTermsWeMatch;
     }
 
     static void AddToMasterMasterKRList(ref List<KeywordResult> masterList, ref List<KeywordResult> listToAddToMasterList)
@@ -55,113 +87,20 @@ public class HistoryParser
         }
     }
     
-    public static List<KeywordResult> GetMatchedSearchTerms(string path)
+
+    static List<string> GetQueryStringList()
     {
-        var searchTerms = GetJSONSearchTerms();
-        List<KeywordResult> searchTermsWeMatch = new List<KeywordResult>();
-
-        // Open Database
-        string connection = "URI=file:" + path;
-        IDbConnection dbcon = new SqliteConnection(connection);
-        dbcon.Open();
-
-        for (int i = 0; i < searchTerms.Count; ++i)
-        {
-            IDbCommand cmnd_read = dbcon.CreateCommand();
-            IDataReader reader;
-
-            string query = GetQueryString(searchTerms[i]);
-
-            cmnd_read.CommandText = query;
-            reader = cmnd_read.ExecuteReader();
-
-            int count = 0;
-            while (reader.Read())
-                ++count;
-
-            if (count > 0)
-            {
-                KeywordResult kr = new KeywordResult();
-                kr.instances = count;
-                kr.name = searchTerms[i].title;
-                searchTermsWeMatch.Add(kr);
-            }
-        }
-        return searchTermsWeMatch;
-    }
-
-    public static List<KeywordResult> GetSearchTermsWeMeetChrome()
-    {
-        HistoryGetter.CopyChromeHistoryFile();
+        List<string> queryStrings = new List<string>();
 
         var searchTerms = GetJSONSearchTerms();
-        List<KeywordResult> searchTermsWeMatch = new List<KeywordResult>();
-
-        // Open Database
-        string connection = "URI=file:" + HistoryGetter.chromeHistoryCopyDir;
-        IDbConnection dbcon = new SqliteConnection(connection);
-        dbcon.Open();
-
-        for (int i = 0; i < searchTerms.Count; ++i)
-        {
-            IDbCommand cmnd_read = dbcon.CreateCommand();
-            IDataReader reader;
-            
-            string query = GetQueryString(searchTerms[i]);
-
-            Debug.Log(query);
-
-            cmnd_read.CommandText = query;
-            reader = cmnd_read.ExecuteReader();
-            
-
-            int count = 0;
-            while (reader.Read())
-            {
-                ++count;
-            }
-
-            if (count > 0)
-            {
-                KeywordResult kr = new KeywordResult();
-                kr.instances = count;
-                kr.name = searchTerms[i].title;
-                searchTermsWeMatch.Add(kr);
-            }
-        }
-        return searchTermsWeMatch;
-    }
-
-    void GetURLSFromChromeHistory() // should delete, but I'm keeping for a nice reference
-    {
-        HistoryGetter.CopyChromeHistoryFile();
-
-        // Open Database
-        string connection = "URI=file:" + HistoryGetter.chromeHistoryCopyDir;
-        IDbConnection dbcon = new SqliteConnection(connection);
-        dbcon.Open();
-
-        // Read and print all values in table
-        IDbCommand cmnd_read = dbcon.CreateCommand();
-        IDataReader reader;
-        string query = "SELECT * FROM urls WHERE url OR title LIKE '%pornhub.com%';";
-        cmnd_read.CommandText = query;
-        reader = cmnd_read.ExecuteReader();
-
-        int count = 0;
-        while (reader.Read())
-        {
-            Debug.Log("url: " + reader[1].ToString());
-            Debug.Log("title: " + reader[2].ToString());
-            ++count;
-        }
-
-        // Close connection
-        dbcon.Close();
+        foreach (var searchTerm in searchTerms)
+            queryStrings.Add(GetQueryString(searchTerm));
+        
+        return queryStrings;
     }
 
 
-    static string GetQueryString(Search search)
+    public static string GetQueryString(Search search)
     {
         string baseQuery = "SELECT * FROM urls WHERE title LIKE ";
         var keywords = search.keywords;

@@ -10,6 +10,7 @@ public class Search
 {
     public string title { get; set; }
     public List<string> keywords { get; set; }
+    public string query => HistoryParser.GetQueryString(this);
 }
 
 public class HistorySearchTermsJson
