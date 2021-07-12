@@ -13,7 +13,7 @@ public class MantisVoice : MonoBehaviour
 
     void OnEnable()
     {
-        Invoke("GetAndPlayVoiceClips", 2.5f);
+        // Invoke("GetAndPlayVoiceClips", 2.5f);
     }
 
     [Button]
@@ -70,12 +70,7 @@ public class MantisVoice : MonoBehaviour
     [Button]
     void GetAndPlayVoiceClips()
     {
-        // play intro audio clip first, then:
         GetAllGameAudioClips();
-        GetAllHistoryAudioClips();
-
-        // Shuffle the audio so it's different every time
-        historyAudClips.Shuffle();
         gameAudClips.Shuffle();
 
         // play all voice clips (main part of the whole "game")
@@ -84,45 +79,44 @@ public class MantisVoice : MonoBehaviour
 
     IEnumerator VoiceAllClips()
     {
-        AudioClip introClip = GetAudioFromPath("intro");
-        if (introClip)
-        {
-            audSrc.clip = introClip;
-            audSrc.Play();
-            yield return new WaitWhile(() => audSrc.isPlaying);
-            yield return new WaitForSeconds(0.5f);
-        }
-
+        yield return StartCoroutine(PlayAudClip(GetAudioFromPath("intro")));
+        
         // if over 6, select a random 6 aud clips
-        foreach (AudioClip audClip in gameAudClips)
-        {
-            audSrc.clip = audClip;
-            audSrc.Play();
-            yield return new WaitWhile(() => audSrc.isPlaying);
-            yield return new WaitForSeconds(0.7f);
-        }
+        foreach (AudioClip audClip in gameAudClips) // Play Game aud Clips
+            yield return StartCoroutine(PlayAudClip(audClip));
 
         AudioClip middle = GetAudioFromPath("MiddleSegway");
-        if (middle)
-        {
-            audSrc.clip = middle;
-            audSrc.Play();
-            yield return new WaitWhile(() => audSrc.isPlaying);
-            yield return new WaitForSeconds(0.5f);
-        }
+        yield return StartCoroutine(PlayAudClip(middle));
 
-        foreach (AudioClip audClip in historyAudClips)
+        yield return StartCoroutine(PlayHistoryClips());
+
+        yield return StartCoroutine(PlayAudClip(GetAudioFromPath("outro")));
+    }
+
+    [Button]
+    void StartHistoryClipsCourotine()
+    {
+        StartCoroutine(PlayHistoryClips());
+    }
+
+    IEnumerator PlayHistoryClips()
+    {
+        List<KeywordResult> searchesMatched = HistoryParser.GetSearchTermsOfAllBrowsers();
+        searchesMatched.Shuffle();
+
+        foreach (var kr in searchesMatched)  // Play History aud Clips
+        {
+            AudioClip audClip = GetAudioFromPath(kr.name);
+            print("Instances of " + kr.name + ": " + kr.instances);
+            yield return StartCoroutine(PlayAudClip(audClip));
+        }
+    }
+
+    IEnumerator PlayAudClip(AudioClip audClip)
+    {
+        if (audClip)
         {
             audSrc.clip = audClip;
-            audSrc.Play();
-            yield return new WaitWhile(() => audSrc.isPlaying);
-            yield return new WaitForSeconds(0.7f);
-        }
-
-        AudioClip outro = GetAudioFromPath("outro");
-        if (outro)
-        {
-            audSrc.clip = outro;
             audSrc.Play();
             yield return new WaitWhile(() => audSrc.isPlaying);
             yield return new WaitForSeconds(0.5f);
