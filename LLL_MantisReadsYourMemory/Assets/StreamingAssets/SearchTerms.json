@@ -1,13 +1,15 @@
 {
     "Searches": [
         {
-            "title": "pornhub.com",
+            "WavFileName": "pornhub.com",
+            "Caption": "Instances of Pornhub Visits:",
             "keywords": [
                 "pornhub.com"
             ]
         },
         {
-            "title": "stepmom",
+            "WavFileName": "stepmom",
+            "Caption": "Instances of StepMom Porn in Browser History:",
             "keywords": [
                 "porn",
                 "step",
@@ -15,34 +17,39 @@
             ]
         },
         {
-            "title": "feet",
+            "WavFileName": "feet",
+            "Caption": "Instances of Feet Porn in Browser History:",
             "keywords": [
                 "feet",
                 "porn"
             ]
         },
         {
-            "title": "hentai",
+            "WavFileName": "hentai",
+            "Caption": "Instances of Hentai in Browser History:",
             "keywords": [
                 "hentai"
             ]
         },
         {
-            "title": "gayporn",
+            "WavFileName": "gayporn",
+            "Caption": "Instances of Gay Porn in Browser History:",
             "keywords": [
                 "gay",
                 "porn"
             ]
         },
         {
-            "title": "scat",
+            "WavFileName": "scat",
+            "Caption": "Instances of Scat Porn in Browser History:",
             "keywords": [
                 "scat",
                 "porn"
             ]
         },
         {
-            "title": "mlp",
+            "WavFileName": "mlp",
+            "Caption": "Instances of My Little Pony Porn in Browser History:",
             "keywords": [
                 "my",
                 "little",
@@ -51,28 +58,32 @@
             ]
         },
         {
-            "title": "futa",
+            "WavFileName": "futa",
+            "Caption": "Instances of Futa Porn in Browser History:",
             "keywords": [
                 "futa",
                 "porn"
             ]
         },
         {
-            "title": "cuck",
+            "WavFileName": "cuck",
+            "Caption": "Instances of Cuck Porn in Browser History:",
             "keywords": [
                 "cuck",
                 "porn"
             ]
         },
         {
-            "title": "preg",
+            "WavFileName": "preg",
+            "Caption": "Instances of pregnaunt Porn in Browser History:",
             "keywords": [
                 "pregnant",
                 "porn"
             ]
         },
         {
-            "title": "BDSM",
+            "WavFileName": "BDSM",
+            "Caption": "Instances of BDSM Porn in Browser History:",
             "keywords": [
                 "BDSM",
                 "porn"

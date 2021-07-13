@@ -8,7 +8,8 @@ using UnityEngine;
 // HistorySearchTermsJson myDeserializedClass = JsonConvert.DeserializeObject<Root>(myJsonResponse); 
 public class Search
 {
-    public string title { get; set; }
+    public string wavFileName { get; set; }
+    public string caption { get; set; }
     public List<string> keywords { get; set; }
     public string query => HistoryParser.GetQueryString(this);
 }

@@ -7,15 +7,22 @@ using Newtonsoft.Json;
 
 public class KeywordResult
 {
-    public string name;
+    public string wavFileName;
+    public string caption;
     public int instances;
     public string query;
 
-    public KeywordResult(string _name, int _instances, string _query) => (name, instances, query) = (_name, _instances, _query);
+    public KeywordResult(Search search, int count)
+    {
+        wavFileName = search.wavFileName;
+        query = search.query;
+        instances = count;
+        caption = search.caption;
+    }
 
     public void Print()
     {
-        Debug.Log("Keyword Result:\t" + name + "\t\t" + "Instances: " + instances + "\n" + query);
+        Debug.Log("Keyword Result:\t" + wavFileName + "\t\t" + "Instances: " + instances + "\n" + query);
     }
 }
 
@@ -61,7 +68,7 @@ public class HistoryParser
 
             if (count > 0)
             {
-                KeywordResult kr = new KeywordResult(searchTerm.title, count, searchTerm.query);
+                KeywordResult kr = new KeywordResult(searchTerm, count);
                 searchTermsWeMatch.Add(kr);
             }
         }
@@ -75,7 +82,7 @@ public class HistoryParser
             bool exists = false;
             foreach (var mkr in masterList)
             {
-                if (kr.name == mkr.name)    // if already exists in Master List
+                if (kr.wavFileName == mkr.wavFileName)    // if already exists in Master List
                 {
                     mkr.instances += kr.instances;
                     exists = true;

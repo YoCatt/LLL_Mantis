@@ -17,57 +17,6 @@ public class MantisVoice : MonoBehaviour
     }
 
     [Button]
-    void DEBUG_MakeSureWeHaveAllAudioClips()
-    {
-        List<string> games = GamesFinder.GetGamesList();
-
-        for (int i = 0; i < games.Count; ++i)
-        {
-            string wavPath = Application.streamingAssetsPath + "/" + games[i] + ".wav";
-
-            if (!File.Exists(wavPath))
-            {
-                print("MISSING AUDIO CLIP: " + games[i]);
-            }
-        }
-
-        List<Search> searches = HistoryParser.GetJSONSearchTerms();
-        for (int i = 0; i < searches.Count; ++i)
-        {
-            string wavPath = Application.streamingAssetsPath + "/" + searches[i].title + ".wav";
-
-            if (!File.Exists(wavPath))
-            {
-                print("MISSING AUDIO CLIP: " + searches[i].title);
-            }
-        }
-    }
-
-    [Button]
-    void Test()
-    {
-        HistoryGetter.CopyHistoryFilesThatExist();
-
-        // print("Chrome Keyword Result: ");
-        // List<KeywordResult> chromeResult = HistoryParser.GetMatchedSearchTerms(HistoryGetter.chromeHistoryCopyDir);
-        // foreach (var kr in chromeResult)
-        //     kr.Print();
-
-        // print("Brave Keyword Result: ");
-        // List<KeywordResult> braveResult = HistoryParser.GetMatchedSearchTerms(HistoryGetter.braveHistoryCopyDir);
-        // foreach (var kr in braveResult)
-        //     kr.Print();
-
-        print("Master Keyword Result: ");
-        List<KeywordResult> matchedTerms = HistoryParser.GetSearchTermsOfAllBrowsers();
-        foreach (var kr in matchedTerms)
-        {
-
-            kr.Print();
-        }
-    }
-
-    [Button]
     void GetAndPlayVoiceClips()
     {
         GetAllGameAudioClips();
@@ -106,8 +55,8 @@ public class MantisVoice : MonoBehaviour
 
         foreach (var kr in searchesMatched)  // Play History aud Clips
         {
-            AudioClip audClip = GetAudioFromPath(kr.name);
-            print("Instances of " + kr.name + ": " + kr.instances);
+            AudioClip audClip = GetAudioFromPath(kr.wavFileName);
+            print(kr.caption + " " + kr.instances);
             yield return StartCoroutine(PlayAudClip(audClip));
         }
     }
@@ -145,7 +94,7 @@ public class MantisVoice : MonoBehaviour
 
         for (int i = 0; i < searchesMatched.Count; ++i)
         {
-            string wavPath = Application.streamingAssetsPath + "/" + searchesMatched[i].name + ".wav";
+            string wavPath = Application.streamingAssetsPath + "/" + searchesMatched[i].wavFileName + ".wav";
 
             if (File.Exists(wavPath))
             {
@@ -154,7 +103,7 @@ public class MantisVoice : MonoBehaviour
             }
             else
             {
-                print("MISSING AUDIO CLIP: " + searchesMatched[i].name);
+                print("MISSING AUDIO CLIP: " + searchesMatched[i].wavFileName);
             }
         }
     }
