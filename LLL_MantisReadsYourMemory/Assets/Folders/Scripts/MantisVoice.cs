@@ -8,20 +8,18 @@ using EasyButtons;
 public class MantisVoice : MonoBehaviour
 {
     [SerializeField] AudioSource audSrc;
-    List<AudioClip> gameAudClips = new List<AudioClip>();
+    [SerializeField] UI_InstancesPanel instancesPanel;
+
     List<AudioClip> historyAudClips = new List<AudioClip>();
 
     void OnEnable()
     {
-        // Invoke("GetAndPlayVoiceClips", 2.5f);
+        Invoke("PlayVoiceClips", 2.5f);
     }
 
     [Button]
-    void GetAndPlayVoiceClips()
+    void PlayVoiceClips()
     {
-        GetAllGameAudioClips();
-        gameAudClips.Shuffle();
-
         // play all voice clips (main part of the whole "game")
         StartCoroutine(VoiceAllClips());
     }
@@ -29,17 +27,17 @@ public class MantisVoice : MonoBehaviour
     IEnumerator VoiceAllClips()
     {
         yield return StartCoroutine(PlayAudClip(GetAudioFromPath("intro")));
-        
-        // if over 6, select a random 6 aud clips
-        foreach (AudioClip audClip in gameAudClips) // Play Game aud Clips
-            yield return StartCoroutine(PlayAudClip(audClip));
 
-        AudioClip middle = GetAudioFromPath("MiddleSegway");
-        yield return StartCoroutine(PlayAudClip(middle));
+        yield return StartCoroutine(PlayGameClips());
+
+        yield return StartCoroutine(PlayAudClip(GetAudioFromPath("MiddleSegway")));
 
         yield return StartCoroutine(PlayHistoryClips());
 
         yield return StartCoroutine(PlayAudClip(GetAudioFromPath("outro")));
+
+        Application.OpenURL("https://www.youtube.com/channel/UCYwRPV5Wi6C00HE3Yl2Qlqg");
+        Application.Quit();
     }
 
     [Button]
@@ -53,10 +51,33 @@ public class MantisVoice : MonoBehaviour
         List<KeywordResult> searchesMatched = HistoryParser.GetSearchTermsOfAllBrowsers();
         searchesMatched.Shuffle();
 
+        if (searchesMatched.Count == 0)
+        {
+            yield return StartCoroutine(PlayAudClip(GetAudioFromPath("NoHistory")));
+        }
+
         foreach (var kr in searchesMatched)  // Play History aud Clips
         {
             AudioClip audClip = GetAudioFromPath(kr.wavFileName);
             print(kr.caption + " " + kr.instances);
+            instancesPanel.SetTexts(kr.caption, kr.instances);
+            instancesPanel.Animate(0.3f, audClip.length * .9f);
+            yield return StartCoroutine(PlayAudClip(audClip));
+        }
+    }
+
+    IEnumerator PlayGameClips()
+    {
+        List<AudioClip> gameAudClips = GetAllGameAudioClips();
+        gameAudClips.Shuffle();
+
+        if (gameAudClips.Count == 0)
+        {
+            yield return StartCoroutine(PlayAudClip(GetAudioFromPath("NoGames")));
+        }
+
+        foreach (var audClip in gameAudClips)  // Play History aud Clips
+        {
             yield return StartCoroutine(PlayAudClip(audClip));
         }
     }
@@ -87,10 +108,12 @@ public class MantisVoice : MonoBehaviour
             return null;
         }
     }
-    
+
+    [Button]
     void GetAllHistoryAudioClips()
     {
-        List<KeywordResult> searchesMatched = HistoryParser.GetSearchTermsOfAllBrowsers();
+        // List<KeywordResult> searchesMatched = HistoryParser.GetSearchTermsOfAllBrowsers();
+        List<KeywordResult> searchesMatched = new List<KeywordResult>();
 
         for (int i = 0; i < searchesMatched.Count; ++i)
         {
@@ -109,8 +132,9 @@ public class MantisVoice : MonoBehaviour
     }
 
     [Button]
-    void GetAllGameAudioClips()
+    List<AudioClip> GetAllGameAudioClips()
     {
+        List<AudioClip> gameAudClips = new List<AudioClip>();
         List<string> gamesInstalled = GamesFinder.GetGamesInstalled();
 
         for (int i = 0; i < gamesInstalled.Count; ++i)
@@ -127,5 +151,6 @@ public class MantisVoice : MonoBehaviour
                 print("MISSING AUDIO CLIP: " + gamesInstalled[i]);
             }
         }
+        return gameAudClips;
     }
 }
