@@ -30,8 +30,8 @@ public class HistoryParser
 {
     public static List<KeywordResult> GetSearchTermsOfAllBrowsers()
     {
-        List<KeywordResult> masterKeyWordMatches = new List<KeywordResult>();
         List<string> historyLocations = HistoryGetter.CopyHistoryFilesThatExist();
+        List<KeywordResult> masterKeyWordMatches = new List<KeywordResult>();
 
         for (int i = 0; i < historyLocations.Count; ++i)
         {

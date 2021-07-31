@@ -26,6 +26,15 @@ public class MantisVoice : MonoBehaviour
 
     IEnumerator VoiceAllClips()
     {
+
+        if (!WeHaveAtLeastOneGameMatch() && !WeHaveAtLeastOneHistoryMatch())
+        {
+            yield return StartCoroutine(PlayAudClip(GetAudioFromPath("WeFoundNothing")));
+            Application.OpenURL("https://www.youtube.com/channel/UCYwRPV5Wi6C00HE3Yl2Qlqg");
+            Application.Quit();
+            yield break;
+        }
+
         yield return StartCoroutine(PlayAudClip(GetAudioFromPath("intro")));
 
         yield return StartCoroutine(PlayGameClips());
@@ -64,6 +73,24 @@ public class MantisVoice : MonoBehaviour
             instancesPanel.Animate(0.3f, audClip.length * .9f);
             yield return StartCoroutine(PlayAudClip(audClip));
         }
+    }
+
+    bool WeHaveAtLeastOneHistoryMatch()
+    {
+        if (HistoryParser.GetSearchTermsOfAllBrowsers().Count == 0)
+        {
+            return false;
+        }
+        return true;
+    }
+
+    bool WeHaveAtLeastOneGameMatch()
+    {
+        if (GetAllGameAudioClips().Count == 0)
+        {
+            return false;
+        }
+        return true;
     }
 
     IEnumerator PlayGameClips()
@@ -112,7 +139,6 @@ public class MantisVoice : MonoBehaviour
     [Button]
     void GetAllHistoryAudioClips()
     {
-        // List<KeywordResult> searchesMatched = HistoryParser.GetSearchTermsOfAllBrowsers();
         List<KeywordResult> searchesMatched = new List<KeywordResult>();
 
         for (int i = 0; i < searchesMatched.Count; ++i)
@@ -149,7 +175,7 @@ public class MantisVoice : MonoBehaviour
             else
             {
                 print("MISSING AUDIO CLIP: " + gamesInstalled[i]);
-            }
+            } 
         }
         return gameAudClips;
     }

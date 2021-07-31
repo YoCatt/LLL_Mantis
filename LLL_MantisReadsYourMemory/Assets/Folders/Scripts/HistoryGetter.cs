@@ -27,7 +27,7 @@ public class HistoryGetter
     {
         historyCopies = new List<string>();
 
-        if (System.IO.File.Exists(braveDefaultHistoryDir))
+        if (System.IO.File.Exists(braveDefaultHistoryDir))  // DRY VIOLATION 😭😭😭😭
         {
             CopyBraveHistoryFile();
             historyCopies.Add(braveHistoryCopyDir);
