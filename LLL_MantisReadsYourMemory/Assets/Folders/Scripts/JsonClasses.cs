@@ -25,3 +25,10 @@ public class JsonGamesClass
 {
     public List<string> games { get; set; }
 }
+
+
+//Games
+public class JsonStatKeywordsClass
+{
+    public List<string> StatKeywords { get; set; }
+}

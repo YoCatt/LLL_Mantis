@@ -21,12 +21,11 @@ public class MantisVoice : MonoBehaviour
     void PlayVoiceClips()
     {
         // play all voice clips (main part of the whole "game")
-        StartCoroutine(VoiceAllClips());
+        // StartCoroutine(VoiceAllClips());
     }
 
     IEnumerator VoiceAllClips()
     {
-
         if (!WeHaveAtLeastOneGameMatch() && !WeHaveAtLeastOneHistoryMatch())
         {
             yield return StartCoroutine(PlayAudClip(GetAudioFromPath("WeFoundNothing")));
@@ -45,8 +44,7 @@ public class MantisVoice : MonoBehaviour
 
         yield return StartCoroutine(PlayAudClip(GetAudioFromPath("outro")));
 
-        Application.OpenURL("https://www.youtube.com/channel/UCYwRPV5Wi6C00HE3Yl2Qlqg");
-        Application.Quit();
+        
     }
 
     [Button]
