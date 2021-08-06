@@ -7,8 +7,8 @@ using Newtonsoft.Json;
 public class GamesFinder
 {
     static string steamDir = @"C:\Program Files (x86)\Steam\steamapps\common\";
-    static string epicDir = @"C:\Program Files\Epic Games";
-    static string ubisoftDir = @"C:\Program Files (x86)\Ubisoft\Ubisoft Game Launcher\games";
+    static string epicDir = @"C:\Program Files\Epic Games\";
+    static string ubisoftDir = @"C:\Program Files (x86)\Ubisoft\Ubisoft Game Launcher\games\";
 
     public static List<string> GetGamesInstalled()
     {

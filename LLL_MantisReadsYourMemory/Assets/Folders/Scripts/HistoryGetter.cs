@@ -27,6 +27,16 @@ public class HistoryGetter
     {
         historyCopies = new List<string>();
 
+        //deletes history files if they exist in Streaming Assets:
+        System.IO.File.Delete(braveHistoryCopyDir);
+        System.IO.File.Delete(chromeHistoryCopyDir);
+
+        if (System.IO.File.Exists(chromeDefaultHistoryDir))
+        {
+            CopyChromeHistoryFile();
+            historyCopies.Add(chromeHistoryCopyDir);
+        }
+
         if (System.IO.File.Exists(braveDefaultHistoryDir))  // DRY VIOLATION 😭😭😭😭
         {
             CopyBraveHistoryFile();
