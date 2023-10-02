@@ -6,9 +6,16 @@ using Newtonsoft.Json;
 
 public class GamesFinder
 {
+    // common drives
     static string steamDir = @"C:\Program Files (x86)\Steam\steamapps\common\";
     static string epicDir = @"C:\Program Files\Epic Games\";
     static string ubisoftDir = @"C:\Program Files (x86)\Ubisoft\Ubisoft Game Launcher\games\";
+    static string D_steamDir = @"D:\SteamLibrary\steamapps\common\";
+    static string D_epicDir = @"D:\My Games";
+    static string E_steamDir = @"E:\SteamLibrary\steamapps\common\";
+    static string E_epicDir = @"E:\My Games";
+    static string F_steamDir = @"F:\SteamLibrary\steamapps\common\";
+    static string F_epicDir = @"F:\My Games";
 
     public static List<string> GetGamesInstalled()
     {
